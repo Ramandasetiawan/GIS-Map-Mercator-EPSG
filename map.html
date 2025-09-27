@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Map Kota Bogor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    h2 {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+    }
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+    .leaflet-tooltip.my-label {
+      background-color: white;
+      border: 1px solid #999;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #333;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <h2>Map Kota Bogor</h2>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Inisialisasi peta (pusatkan ke Bogor)
+    var map = L.map('map').setView([-6.582, 106.816], 16);
+
+    // Tambahkan tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Data GeoJSON dari kamu
+    var geojsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": { "Nama": "RSIA Nurhaida" },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [106.81482895029205, -6.581140326117861]
+          },
+          "id": 0
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Dinas Pariwisata" },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [106.81738173119504, -6.583223674149295]
+          },
+          "id": 1
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Dinas Pariwisata (Area)" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+              [106.81699563695327, -6.582889690504047],
+              [106.81704979945374, -6.583311166039309],
+              [106.81784418280387, -6.583185620172856],
+              [106.81737477446109, -6.58265653367198],
+              [106.81699563695327, -6.582889690504047]
+            ]]
+          },
+          "id": 3
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "RSIA Nuraida (Area)" },
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+              [106.81451756195986, -6.580845071078755],
+              [106.81452556684593, -6.5814653378809425],
+              [106.81522199197758, -6.5814653378809425],
+              [106.81510191867949, -6.580821214648111],
+              [106.81451756195986, -6.580845071078755]
+            ]]
+          },
+          "id": 3
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Jalan Menuju Dinas Pariwisata" },
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [106.81506669507473, -6.581415470807016],
+              [106.81540246209875, -6.581572385941001],
+              [106.8157706718302, -6.581728605786751],
+              [106.81593559910596, -6.581881015345104],
+              [106.81606030942822, -6.582019780167641],
+              [106.8168236315056, -6.581836402606385],
+              [106.81732181163414, -6.581734622920607],
+              [106.81776084655507, -6.581878351314316],
+              [106.8178356809388, -6.582002255254039],
+              [106.81766106477698, -6.582676291138128],
+              [106.81756627314678, -6.582938966639688]
+            ]
+          },
+          "id": 4
+        }
+      ]
+    };
+
+    // Tambahkan GeoJSON ke peta
+    var layerGeo = L.geoJSON(geojsonData, {
+      onEachFeature: function (feature, layer) {
+        let nama = feature.properties.Nama || feature.properties.nama || "Tanpa Nama";
+        // Popup saat diklik
+        layer.bindPopup("<b>Nama:</b> " + nama);
+
+        // Tooltip label nama tempat tampil permanen
+        layer.bindTooltip(nama, {
+          permanent: true,
+          direction: "top",
+          className: "my-label"
+        }).openTooltip();
+      },
+      style: function(feature) {
+        if (feature.geometry.type === "Polygon") {
+          return { color: "blue", fillColor: "lightblue", fillOpacity: 0.5 };
+        }
+        if (feature.geometry.type === "LineString") {
+          return { color: "red", weight: 3 };
+        }
+      },
+      pointToLayer: function(feature, latlng) {
+        return L.marker(latlng);
+      }
+    }).addTo(map);
+
+    // Sesuaikan zoom agar semua fitur terlihat
+    map.fitBounds(layerGeo.getBounds());
+  </script>
+</body>
+</html>
