@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Peta Batam - Web Mercator (GeoJSON)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <h3>Peta Batam - Web Mercator (Titik GeoJSON)</h3>
+  <div id="map" style="height:400px;"></div>
+
+  <script>
+    //Inisialisasi peta dengan CRS default (Web Mercator)
+    var map = L.map('map').setView([1.1002, 104.0358], 14);
+
+    // Tambahkan tile layer dari OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3Data GeoJSON — titik wisata, sensor banjir, dan pos evakuasi
+    var geojsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Titik Wisata" },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [104.03583112351117, 1.1002450283755536]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Titik Sensor Banjir" },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [104.05043035012108, 1.0993048396424854]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": { "Nama": "Pos Evakuasi" },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [104.04249863357336, 1.1066929486812143]
+          }
+        }
+      ]
+    };
+
+    // Tampilkan GeoJSON sebagai marker dan popup
+    L.geoJSON(geojsonData, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng);
+      },
+      onEachFeature: function (feature, layer) {
+        if (feature.properties && feature.properties.Nama) {
+          layer.bindPopup(feature.properties.Nama);
+        }
+      }
+    }).addTo(map);
+  </script>
+</body>
+</html>

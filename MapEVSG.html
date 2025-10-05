@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Peta Batam - WGS84 (EPSG:4326)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map { height: 500px; }
+  </style>
+</head>
+<body>
+  <h3>Peta Batam - WGS84 (EPSG:4326)</h3>
+  <div id="map"></div>
+
+  <script>
+    // menggunakan sistem koordinat EPSG:4326
+    var map = L.map('map', {
+      crs: L.CRS.EPSG4326
+    }).setView([1.1002, 104.0358], 14);
+
+    // menngunakan tile layer yang mendukung EPSG:4326 (WMS)
+    L.tileLayer.wms('https://ows.terrestris.de/osm/service?', {
+      layers: 'OSM-WMS',
+      format: 'image/png',
+      transparent: false,
+      attribution: '© OpenStreetMap, terrestris GmbH'
+    }).addTo(map);
+
+    // Data GeoJSON
+    var geojsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        { "type": "Feature", "properties": { "Nama": "Titik Wisata" },
+          "geometry": { "type": "Point", "coordinates": [104.03583112351117, 1.1002450283755536] } },
+        { "type": "Feature", "properties": { "Nama": "Titik Sensor Banjir" },
+          "geometry": { "type": "Point", "coordinates": [104.05043035012108, 1.0993048396424854] } },
+        { "type": "Feature", "properties": { "Nama": "Pos Evakuasi" },
+          "geometry": { "type": "Point", "coordinates": [104.04249863357336, 1.1066929486812143] } }
+      ]
+    };
+
+    
+    L.geoJSON(geojsonData, {
+      onEachFeature: function (feature, layer) {
+        layer.bindPopup(feature.properties.Nama);
+      }
+    }).addTo(map);
+  </script>
+</body>
+</html>
